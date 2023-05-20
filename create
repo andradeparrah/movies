@@ -1,0 +1,54 @@
+let pagina = 1;
+const previousButton = document.getElementById('previousButton');
+const nextButton = document.getElementById('nextButton');
+
+nextButton.addEventListener('click', () => {
+	if(pagina < 1000){
+		pagina += 1;
+		cargarPeliculas()
+	}
+});
+
+previousButton.addEventListener('click', () => {
+	if(pagina > 1){
+		pagina -= 1;
+		chargemovies();
+	}
+});
+
+const chargemovies = async() => {
+	try {
+		const answer = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=192e0b9821564f26f52949758ea3c473&language=es-ES&page=${pagina}`);
+	
+		console.log(answer);
+
+		if(answer.status === 200){
+			const hola = await answer.json();
+			
+			let movies = '';
+			hola.results.forEach(movie => {
+				movies += `
+					<div class="movie">
+						<img class="poster" src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
+						<h3 class="titulo">${movie.title}</h3>
+					</div>
+				`;
+			});
+
+			document.getElementById('container').innerHTML = movies;
+
+		} else if(answer.status === 401){
+			console.log('Error');
+		} else if(answer.status === 404){
+			console.log('Error');
+		} else {
+			console.log('Error');
+		}
+
+	} catch(error){
+		console.log(error);
+	}
+
+}
+
+chargemovies();
